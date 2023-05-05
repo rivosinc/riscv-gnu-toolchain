@@ -291,7 +291,11 @@ stamps/build-binutils-linux: $(BINUTILS_SRCDIR) $(BINUTILS_SRC_GIT) stamps/check
 	rm -rf $@ $(notdir $@)
 	mkdir $(notdir $@)
 # CC_FOR_TARGET is required for the ld testsuite.
-	cd $(notdir $@) && CC_FOR_TARGET=$(GLIBC_CC_FOR_TARGET) $</configure \
+	cd $(notdir $@) && \
+		CC_FOR_TARGET=$(GLIBC_CC_FOR_TARGET) \
+		CFLAGS="-ggdb3 -Og -fno-inline" \
+		CXXFLAGS="-ggdb3 -Og -fno-inline" \
+		$</configure \
 		--target=$(LINUX_TUPLE) \
 		$(CONFIGURE_HOST) \
 		--prefix=$(INSTALL_DIR) \
@@ -364,8 +368,8 @@ endif
 	cd $(notdir $@) && \
 		CC="$(GLIBC_CC_FOR_TARGET) $($@_CFLAGS)" \
 		CXX="this-is-not-the-compiler-youre-looking-for" \
-		CFLAGS="$(CFLAGS_FOR_TARGET) -g -O2 $($@_CFLAGS)" \
-		CXXFLAGS="$(CXXFLAGS_FOR_TARGET) -g -O2 $($@_CFLAGS)" \
+		CFLAGS="-g -O2 $($@_CFLAGS) $(CFLAGS_FOR_TARGET)" \
+		CXXFLAGS="-g -O2 $($@_CFLAGS) $(CXXFLAGS_FOR_TARGET)" \
 		ASFLAGS="$(ASFLAGS_FOR_TARGET) $($@_CFLAGS)" \
 		$</configure \
 		--host=$(call make_tuple,$($@_XLEN),linux-gnu) \
@@ -388,7 +392,10 @@ stamps/build-gcc-linux-stage1: $(GCC_SRCDIR) $(GCC_SRC_GIT) stamps/build-binutil
 	if test -f $</contrib/download_prerequisites && test "@NEED_GCC_EXTERNAL_LIBRARIES@" = "true"; then cd $< && ./contrib/download_prerequisites; fi
 	rm -rf $@ $(notdir $@)
 	mkdir $(notdir $@)
-	cd $(notdir $@) && $</configure \
+	cd $(notdir $@) && \
+		CFLAGS="-ggdb3 -Og -fno-inline" \
+		CXXFLAGS="-ggdb3 -Og -fno-inline" \
+		$</configure \
 		--target=$(LINUX_TUPLE) \
 		$(CONFIGURE_HOST) \
 		--prefix=$(INSTALL_DIR) \
@@ -461,7 +468,10 @@ stamps/build-gcc-linux-stage2: $(GCC_SRCDIR) $(GCC_SRC_GIT) $(addprefix stamps/b
 stamps/build-binutils-linux-native: $(BINUTILS_SRCDIR) $(BINUTILS_SRC_GIT) stamps/build-gcc-linux-stage2 stamps/check-write-permission
 	rm -rf $@ $(notdir $@)
 	mkdir $(notdir $@)
-	cd $(notdir $@) && $</configure \
+	cd $(notdir $@) && \
+		CFLAGS="-ggdb3 -Og -fno-inline" \
+		CXXFLAGS="-ggdb3 -Og -fno-inline" \
+		$</configure \
 		--host=$(LINUX_TUPLE) \
 		--target=$(LINUX_TUPLE) \
 		$(CONFIGURE_HOST) \
@@ -859,6 +869,8 @@ stamps/build-qemu: $(QEMU_SRCDIR) $(QEMU_SRC_GIT)
 	mkdir $(notdir $@)
 	cd $(notdir $@) && $</configure \
 		--prefix=$(INSTALL_DIR) \
+		--extra-cflags="-ggdb3 -Og" \
+		--extra-cxxflags="-ggdb3 -Og" \
 		--target-list=$(QEMU_TARGETS) \
 		--interp-prefix=$(INSTALL_DIR)/sysroot \
 		--python=python3
