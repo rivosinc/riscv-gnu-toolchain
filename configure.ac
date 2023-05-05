@@ -50,11 +50,26 @@ AS_IF([test "x$enable_linux" != xno],
 	[AC_SUBST(default_target, linux)],
 	[AC_SUBST(default_target, newlib)])
 
-AC_ARG_WITH(arch,
-	[AS_HELP_STRING([--with-arch=rv64imafdc],
-		[Sets the base RISC-V ISA, defaults to rv64imafdc])],
+AC_ARG_ENABLE(zisslpcfi,
+	[AS_HELP_STRING([--enable-zisslpcfi],
+		[Build target libraries with the Zisslpcfi extension])],
 	[],
-	[with_arch=rv64imafdc]
+	[enable_zisslpcfi=no]
+	)
+
+AS_IF([test "x$enable_zisslpcfi" != xno],
+	[AC_SUBST(_zisslpcfi, _zisslpcfi)
+	 AS_CASE([x$enable_zisslpcfi],
+		[x|xyes], [AC_SUBST(enable_zisslpcfi, --enable-zisslpcfi)],
+		[x+*], [AC_SUBST(enable_zisslpcfi, --enable-zisslpcfi=$enable_zisslpcfi)],
+		[AC_MSG_ERROR([Unknown zisslpcfi option])])],
+	[AC_SUBST(enable_zisslpcfi, --disable-zisslpcfi)])
+
+AC_ARG_WITH(arch,
+	[AS_HELP_STRING([--with-arch=rv64imafdc[[_zisslpcfi]]],
+		[Sets the base RISC-V ISA, defaults to rv64imafdc[_zisslpcfi]])],
+	[with_arch=$with_arch$_zisslpcfi],
+	[with_arch=rv64imafdc$_zisslpcfi]
 	)
 
 AC_ARG_WITH(abi,

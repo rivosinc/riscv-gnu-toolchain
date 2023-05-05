@@ -373,6 +373,7 @@ endif
 		--disable-werror \
 		--enable-shared \
 		--enable-obsolete-rpc \
+		@enable_zisslpcfi@ \
 		--with-headers=$(LINUX_HEADERS_SRCDIR) \
 		$(MULTILIB_FLAGS) \
 		--enable-kernel=3.0.0 \
@@ -406,6 +407,7 @@ stamps/build-gcc-linux-stage1: $(GCC_SRCDIR) $(GCC_SRC_GIT) stamps/build-binutil
 		--disable-libgomp \
 		--disable-nls \
 		--disable-bootstrap \
+		@enable_zisslpcfi@ \
 		--src=$(gccsrcdir) \
 		$(GCC_CHECKING_FLAGS) \
 		$(MULTILIB_FLAGS) \
@@ -441,6 +443,7 @@ stamps/build-gcc-linux-stage2: $(GCC_SRCDIR) $(GCC_SRC_GIT) $(addprefix stamps/b
 		$(ENABLE_LIBSANITIZER) \
 		--disable-nls \
 		--disable-bootstrap \
+		@enable_zisslpcfi@ \
 		--src=$(gccsrcdir) \
 		$(GCC_CHECKING_FLAGS) \
 		$(MULTILIB_FLAGS) \

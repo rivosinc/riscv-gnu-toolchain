@@ -614,6 +614,8 @@ WITH_ISA_SPEC
 WITH_TUNE
 WITH_ABI
 WITH_ARCH
+enable_zisslpcfi
+_zisslpcfi
 default_target
 FETCHER
 FTP
@@ -675,6 +677,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_linux
+enable_zisslpcfi
 with_arch
 with_abi
 with_tune
@@ -1333,6 +1336,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-linux          set linux as the default make target
                           [--disable-linux]
+  --enable-zisslpcfi      Build target libraries with the Zisslpcfi extension
   --enable-multilib       build both RV32 and RV64 runtime libraries (only
                           RV64 for musl libc) [--disable-multilib]
   --enable-gcc-checking   Enable gcc internal checking, it will make gcc very
@@ -1345,7 +1349,9 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-arch=rv64imafdc  Sets the base RISC-V ISA, defaults to rv64imafdc
+  --with-arch=rv64imafdc[_zisslpcfi]
+                          Sets the base RISC-V ISA, defaults to
+                          rv64imafdc[_zisslpcfi]
   --with-abi=lp64d        Sets the base RISC-V ABI, defaults to lp64d
   --with-tune=rocket      Set the base RISC-V CPU, defaults to rocket
   --with-isa-spec=2.2     Set the default ISA spec version, default to 2.2,
@@ -3291,12 +3297,39 @@ else
 
 fi
 
+# Check whether --enable-zisslpcfi was given.
+if test "${enable_zisslpcfi+set}" = set; then :
+  enableval=$enable_zisslpcfi;
+else
+  enable_zisslpcfi=no
+
+fi
+
+
+if test "x$enable_zisslpcfi" != xno; then :
+  _zisslpcfi=_zisslpcfi
+
+	 case x$enable_zisslpcfi in #(
+  x|xyes) :
+    enable_zisslpcfi=--enable-zisslpcfi
+ ;; #(
+  x+*) :
+    enable_zisslpcfi=--enable-zisslpcfi=$enable_zisslpcfi
+ ;; #(
+  *) :
+    as_fn_error $? "Unknown zisslpcfi option" "$LINENO" 5 ;;
+esac
+else
+  enable_zisslpcfi=--disable-zisslpcfi
+
+fi
+
 
 # Check whether --with-arch was given.
 if test "${with_arch+set}" = set; then :
-  withval=$with_arch;
+  withval=$with_arch; with_arch=$with_arch$_zisslpcfi
 else
-  with_arch=rv64imafdc
+  with_arch=rv64imafdc$_zisslpcfi
 
 fi
 
